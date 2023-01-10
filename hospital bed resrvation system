@@ -1,0 +1,269 @@
+#include <iostream>
+using namespace std;
+class bed{
+ public:
+ int number;
+ int fill;
+ bed *next;
+};
+class hosp{
+ public:
+ string hosp_name;
+ string pin_code;
+ hosp *next;
+ bed *beds;
+};
+class hist{ //class for print_history
+ public:
+ string user_name;
+ string hosp_name;
+ int no_beds;
+ hist *next;
+};
+void print_beds(bed *head){
+ while(head!=NULL){
+ cout<<" bed no: "<<head->number<<" ";
+ if(head->fill==1){
+ cout<<"filled"<<endl;
+ }else{
+ cout<<"empty"<<endl;
+ }
+ head = head->next;
+ }
+}
+void print_hosp(hosp *head, string pin_code){
+ while(head!=NULL){
+ if(pin_code==head->pin_code){
+ cout<<" Hospital name: "<<head-
+>hosp_name<<endl;
+ print_beds(head->beds);
+ head=head->next;
+ }
+ }
+}
+bool check_beds(bed *head, int no_of_beds){
+ int total=0;
+ while(head!=NULL){
+ if(head->fill==0){
+ total++;
+ }
+ 
+ head=head->next;
+ }
+ if(total>=no_of_beds){
+ return true;
+ }
+ return false;
+}
+bool check_beds_hosp(string temp_hosp_name,int no_of_beds,hosp 
+*head){
+ while(head!=NULL){
+ if(temp_hosp_name==head->hosp_name){
+ if(check_beds(head->beds,no_of_beds)){
+ return true;
+ }
+ else{
+ return false;
+ }
+ }
+ head=head->next;
+ }
+ return false;
+}
+string ask_number(string yourname){
+ string mobile;
+ int i;
+ cout<<" -------------------\n";
+ cout<<" Enter mobile number: ";
+ cin>>mobile;
+ cout<<" --------------------\n";
+ 
+ for(i=0;i<mobile.length();i++){
+ //cout<<(mobile[i]-'0')<<endl;
+ if((mobile[i]-'0')>=0 and (mobile[i]-'0')<=9 ){
+ 
+ }else{
+ cout<<" Enter valid mobile number: ";
+ cin>>mobile;
+ break;
+ }
+ }
+ if(mobile.length()==10){
+ cout<<" "<<yourname<<" Your booking is 
+Successful\n";
+ cout<<" ---------------------------------------
+--\n";
+ return mobile;
+ }else{
+ 
+ cout<<" Enter valid mobile number: ";
+ cin>>mobile;
+ }
+ return "0"; // we will never reach here
+}
+bool check_hosp_exis(string temp_hosp_name,hosp *head){
+ while(head!=NULL){
+ if(temp_hosp_name==head->hosp_name){
+ return true;
+ }
+ head=head->next;
+ }
+ return false;
+}
+void book_bed(bed *head,int no_of_beds){
+ while(head!=NULL || no_of_beds>0){
+ if(head->fill==0){
+ head->fill=1;
+ no_of_beds--;
+ }
+ head=head->next;
+ }
+}
+void book(string temp_hosp_name,int no_of_beds, hosp *head){
+ while(head!=NULL){
+ if(temp_hosp_name==head->hosp_name){
+ book_bed(head->beds,no_of_beds);
+ }
+ head=head->next;
+ }
+}
+void print_history(hist* head){
+ while(head!=NULL){
+ cout<<" User name: "<<head->user_name<<endl;
+ cout<<" Hospital name: "<<head->hosp_name<<endl;
+ cout<<" Number of beds : "<<head->no_beds<<endl;
+ head=head->next;
+ }
+}
+int main()
+{
+ int n=0,x=0,i;
+ char c='1';
+ hosp *current_hosp,*next_hosp,*head_hosp; 
+//initiating the pointers to make a linked list of hospitals
+ current_hosp = new hosp();
+ next_hosp = new hosp();
+ head_hosp = next_hosp;
+ 
+ hist *current_hist,*next_hist,*head_hist; 
+//initiating the pointers to make a linked list of booking 
+history
+ current_hist = new hist();
+ next_hist = new hist();
+ head_hist = next_hist;
+ 
+ 
+ ////////////////
+ 
+ while(1){
+ do{
+ cout<<"\n 
+*****************************************\n ";
+ cout<<" * Hospital Bed Reservation System *\n";
+ cout<<" 
+*****************************************\n";
+ 
+ cout<<" 1) Add hospital \n 2) Book Bed \n 
+3) See booking history \n";
+ cout<<" 
+*****************************************\n ";
+ cout<<"\n Enter your choice : ";
+ cin>>c;
+ cout<<" --------------------\n";
+ }while(!(c=='1' or c=='2' or c=='3'));
+ if(c=='1'){
+ cout<<" Enter hospital name: ";
+ cin>>next_hosp->hosp_name;
+ cout<<" --------------------\n";
+ cout<<" Enter hospital pin code: ";
+ cin>>next_hosp->pin_code;
+ cout<<" -------------------------------------
+\n";
+ cout<<" Enter total number of beds in 
+"<<next_hosp->hosp_name<<": ";
+ cin>>n;
+ cout<<" -------------------------------------
+\n";
+ cout<<" Enter Status of Beds\n 0-Empty\n 
+1-Filled"<<endl;
+ bed *current_bed,*next_bed; //initiating 
+the pointers to make a linked list of beds for hospital
+ current_bed=new bed();
+ next_bed=new bed();
+ next_hosp->beds=next_bed;
+ 
+ for(i=0;i<n;i++){
+ next_bed->number=i+1;
+ 
+ cout<<" ----------------\n ";
+ cout<<"Bed number "<<i+1<<" -> ";
+ cin>>next_bed->fill;
+ current_bed->next=next_bed;
+ current_bed=next_bed;
+ next_bed=new bed();
+ }
+ next_bed=NULL;
+ //print_beds(next_hosp->beds);
+ current_hosp->next=next_hosp;
+ current_hosp=next_hosp;
+ next_hosp=new hosp();
+ }
+ 
+ if(c=='2'){
+ 
+ string temp_pin_code;
+ current_hosp->next=NULL;
+ cout<<" Enter pincode: ";
+ cin>>temp_pin_code;
+ cout<<" ----------------------------\n";
+ cout<<" List of Hospitals avalilable\n";
+ cout<<" ----------------------------\n";
+ print_hosp(head_hosp,temp_pin_code);
+ cout<<" ----------------\n";
+ string your_name;
+ cout<<" Enter your name: ";
+ cin>>your_name;
+ cout<<" ----------------\n";
+ cout<<" Enter hospital name: ";
+ string temp_hosp_name;
+ cin>>temp_hosp_name;
+ cout<<" --------------------\n";
+ 
+if(check_hosp_exis(temp_hosp_name,head_hosp)==false){
+ cout<<" Sorry! hospital 
+"<<temp_hosp_name<<" doesn't exist in our system";
+ break;
+ }
+ cout<<" Enter no of beds: ";
+ int no_of_beds;
+ cin>>no_of_beds;
+ cout<<" -----------------\n";
+ 
+if(check_beds_hosp(temp_hosp_name,no_of_beds,head_hosp)){
+ string mobile;
+ mobile = ask_number(your_name);
+ 
+ 
+ book(temp_hosp_name,no_of_beds,head_hosp);
+ 
+ 
+ next_hist->hosp_name=temp_hosp_name;
+ next_hist->user_name=your_name;
+ next_hist->no_beds=no_of_beds;
+ 
+ current_hist->next=next_hist;
+ current_hist=next_hist;
+ next_hist=new hist();
+ 
+ }
+ else{
+ cout<<" Not enough beds!!\n";
+ }
+ }
+ if(c=='3'){
+ print_history(head_hist);
+ }
+ }
+ 
+ return 0;
+ }
